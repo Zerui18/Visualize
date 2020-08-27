@@ -33,12 +33,28 @@ fileprivate struct Row: View {
     var body: some View {
         HStack(spacing: 0) {
             ForEach(sequence.items) { item in
-                item.color
+                Item(item: item)
             }
         }
         .opacity(sequence.isSorted ? 0.5:1)
         .animation(.linear)
     }
+}
+
+fileprivate struct Item: View {
+    
+    @ObservedObject var item: ASequence.Item
+    
+    var body: some View {
+        if !item.showBorder {
+            item.color
+        }
+        else {
+            item.color
+                .border(Color.white, width: 3)
+        }
+    }
+    
 }
 
 //struct GridView_Previews: PreviewProvider {

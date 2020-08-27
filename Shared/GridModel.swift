@@ -12,7 +12,10 @@ final class GridModel: ObservableObject {
     init(nRows: Int, nColumns: Int) {
         self.nRows = nRows
         self.nColumns = nColumns
-        self.sequences = (1...nRows).map { _ in .init(withItems: nColumns, sortingWith: QuickSort.self) }
+        let nQuicksort = nRows / 2
+        self.sequences =
+            (1...nQuicksort).map {_ in .init(withItems: nColumns, sortingWith: QuickSort.self) }
+            + (1...(nRows - nQuicksort)).map { _ in  .init(withItems: nColumns, sortingWith: MergeSort.self) }
     }
     
     @Published var nRows: Int
@@ -35,7 +38,7 @@ final class GridModel: ObservableObject {
             $0.algo.startIfNecessary()
         }
         // Auto-stepping.
-        timer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] timer in
+        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] timer in
             self?.step()
         }
     }

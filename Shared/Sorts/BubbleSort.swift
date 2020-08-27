@@ -19,8 +19,15 @@ class BubbleSort: GenericSort {
             swapped = false
             currentIndex = 0
             
+            // Highlight current item being bubbled.
+            var currentItem = sequence.items[0]
+            currentItem.showBorder = true
+            
             while currentIndex <= endIndex {
                 if sequence.items[currentIndex] > sequence.items[currentIndex + 1] {
+                    currentItem.showBorder = false
+                    currentItem = sequence.items[currentIndex]
+                    currentItem.showBorder = true
                     // Swap.
                     pause(steps: steps)
                     sequence.items.swapAt(currentIndex, currentIndex + 1)
@@ -28,6 +35,9 @@ class BubbleSort: GenericSort {
                 }
                 currentIndex += 1
             }
+            
+            // Un-highlight.
+            currentItem.showBorder = false
             
             // Early stopping.
             if !swapped {

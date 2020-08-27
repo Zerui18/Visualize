@@ -13,18 +13,31 @@ class ASequence: ObservableObject, Identifiable {
         self.items = [Int](1...items)
             .shuffled()
             .map { value in
-                Item.init(value: value, fractionValue: Double(value) / Double(items))
+                Item(value: value, fractionValue: Double(value) / Double(items))
             }
         self.algoType = algoType
     }
     
-    struct Item: Identifiable, Comparable {
+    class Item: ObservableObject, Identifiable, Comparable {
+    
+        init(value: Int, fractionValue: Double) {
+            self.value = value
+            self.fractionValue = fractionValue
+        }
         
         let value: Int
         let fractionValue: Double
         
+        var showBorder = false {
+            willSet {
+                DispatchQueue.main.async {
+                    self.objectWillChange.send()
+                }
+            }
+        }
+        
         var color: Color {
-            Color(hue: 0.5, saturation: 1, brightness: fractionValue)
+            Color(hue: fractionValue, saturation: 1, brightness: 1)
         }
         
         var id: Int {

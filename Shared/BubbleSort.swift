@@ -9,7 +9,7 @@ import Foundation
 
 class BubbleSort: GenericSort {
     
-    override func execute(isTesting: Bool) {
+    override func execute(steps: Bool) {
         var endIndex = sequence.items.count - 2
         var currentIndex = 0
         var swapped = true
@@ -22,7 +22,7 @@ class BubbleSort: GenericSort {
             while currentIndex <= endIndex {
                 if sequence.items[currentIndex] > sequence.items[currentIndex + 1] {
                     // Swap.
-                    pause(isTesting: isTesting)
+                    pause(steps: steps)
                     sequence.items.swapAt(currentIndex, currentIndex + 1)
                     swapped = true
                 }

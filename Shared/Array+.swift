@@ -20,3 +20,16 @@ extension Array where Element: Comparable {
         return true
     }
 }
+
+extension Array {
+    
+    static func *(_ lhs: Array, _ rhs: Int) -> Array {
+        var newArray = [Element]()
+        newArray.reserveCapacity(lhs.count * rhs)
+        for _ in 0..<rhs {
+            newArray += lhs
+        }
+        return newArray
+    }
+    
+}

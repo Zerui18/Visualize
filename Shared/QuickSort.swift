@@ -9,26 +9,26 @@ import Foundation
 
 class QuickSort: GenericSort {
     
-    override func execute(isTesting: Bool) {
+    override func execute(steps: Bool) {
         
         func partition(low: Int, high: Int) -> Int {
             var idxSmall = low - 1
             // Pick pivot at centre.
             let idxCentre = (low + high) / 2
             let pivot = sequence.items[idxCentre]
-            pause(isTesting: isTesting)
+            pause(steps: steps)
             // Swap to side.
             sequence.items.swapAt(idxCentre, high)
             for i in low...(high - 1) {
                 if sequence.items[i] < pivot {
                     // Move all smaller than pivot to the left.
                     idxSmall += 1
-                    pause(isTesting: isTesting)
+                    pause(steps: steps)
                     sequence.items.swapAt(idxSmall, i)
                 }
             }
             // Move pivot to correct position.
-            pause(isTesting: isTesting)
+            pause(steps: steps)
             sequence.items.swapAt(idxSmall + 1, high)
             // Return the pivot index.
             return idxSmall + 1

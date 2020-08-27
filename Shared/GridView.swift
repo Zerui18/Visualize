@@ -9,24 +9,15 @@ import SwiftUI
 
 struct GridView: View {
     
-    init(withRows rows: Int, columns: Int, sortingWith algo: GenericSort.Type) {
-        self.nRows = rows
-        self.nColumns = columns
-        self.sequences = (1...rows).map {_ in ASequence(withItems: columns, sortingWith: algo) }
-    }
-    
-    let nRows: Int
-    let nColumns: Int
-    
-    let sequences: [ASequence]
+    @EnvironmentObject var model: GridModel
     
     var body: some View {
         let body = VStack(spacing: 5) {
-            ForEach(sequences) { seq in
+            ForEach(model.sequences) { seq in
                 Row(sequence: seq)
             }
         }
-        if nRows * nColumns >= 500 {
+        if model.shouldBuildDrawingGroup {
             body.drawingGroup()
         }
         else {
@@ -47,22 +38,12 @@ fileprivate struct Row: View {
         }
         .opacity(sequence.isSorted ? 0.5:1)
         .animation(.linear)
-        .onAppear {
-            sequence.algo.start()
-            Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (timer) in
-                sequence.algo.step()
-                // Cleanup when done.
-                if sequence.isSorted {
-                    timer.invalidate()
-                }
-            }
-        }
     }
 }
 
-struct GridView_Previews: PreviewProvider {
-    static var previews: some View {
-        GridView(withRows: 10, columns: 10, sortingWith: BubbleSort.self)
-            .previewLayout(.fixed(width: 500, height: 500))
-    }
-}
+//struct GridView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        GridView(withRows: 10, columns: 10, sortingWith: [BubbleSort.self] * 5 + [QuickSort.self] * 5)
+//            .previewLayout(.fixed(width: 500, height: 500))
+//    }
+//}

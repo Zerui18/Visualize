@@ -9,13 +9,13 @@ import SwiftUI
 
 class ASequence: ObservableObject, Identifiable {
     
-    init<AlgoType: GenericSort>(withItems items: Int, sortingWith algoType: AlgoType.Type) {
+    init(withItems items: Int, sortingWith algoType: GenericSort.Type) {
         self.items = [Int](1...items)
             .shuffled()
             .map { value in
                 Item.init(value: value, fractionValue: Double(value) / Double(items))
             }
-        self.algo = algoType.init(sequence: self)
+        self.algoType = algoType
     }
     
     struct Item: Identifiable, Comparable {
@@ -31,6 +31,7 @@ class ASequence: ObservableObject, Identifiable {
             value
         }
         
+        // MARK: Comparable
         static func < (lhs: ASequence.Item, rhs: ASequence.Item) -> Bool {
             lhs.value < rhs.value
         }
@@ -40,11 +41,15 @@ class ASequence: ObservableObject, Identifiable {
         }
     }
     
-    var algo: GenericSort!
+    private let algoType: GenericSort.Type
+    lazy var algo: GenericSort = algoType.init(sequence: self)
     
-    // MARK: Published
+    // MARK: Psuedo Published
     var items: [Item] {
         willSet {
+            // Update is sorted
+            isSorted = newValue.isSortedAscending
+            // Update observer.
             DispatchQueue.main.async {
                 withAnimation {
                     self.objectWillChange.send()
@@ -53,10 +58,17 @@ class ASequence: ObservableObject, Identifiable {
         }
     }
     
-    @Published var isSorted = false
+    var isSorted = false
     
     var isSortedAscending: Bool {
         items.isSortedAscending
+    }
+    
+    func shuffle() {
+        // Randomize items.
+        items.shuffle()
+        // Reset sort.
+        algo = algoType.init(sequence: self)
     }
     
 }

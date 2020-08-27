@@ -13,7 +13,6 @@ class GenericSort {
         self.id = UUID()
         self.sequence = sequence
         self.queue = DispatchQueue(label: id.uuidString, qos: .userInteractive)
-        self.dgroup = DispatchGroup()
     }
     
     fileprivate final let id: UUID
@@ -21,47 +20,55 @@ class GenericSort {
     final let queue: DispatchQueue
     private final var dgroup: DispatchGroup?
     
-    var shouldPause = true
+    var hasBegun = false
     
     final var isDone: Bool {
         sequence.isSortedAscending
     }
     
-    final func start(isTesting: Bool = false) {
-        if isTesting {
+    /// Calls .start only if necessary.
+    final func startIfNecessary() {
+        if !hasBegun && !sequence.isSorted {
+            start(steps: true)
+        }
+    }
+    
+    /// Start the sorting process.
+    final func start(steps: Bool = true) {
+        hasBegun = true
+        if !steps {
             dgroup = .init()
-            execute(isTesting: true)
+            execute(steps: false)
             dgroup = nil
-            sequence.isSorted = true
+            hasBegun = false
         }
         else {
             queue.async {
                 self.dgroup = .init()
-                self.execute(isTesting: false)
+                self.execute(steps: true)
                 self.dgroup = nil
-                DispatchQueue.main.async {
-                    self.sequence.isSorted = true
-                }
+                self.hasBegun = false
             }
         }
     }
     
-    func execute(isTesting: Bool) {
+    func execute(steps: Bool) {
         fatalError("This method should be overriden by subclasses!")
     }
     
     final func step() {
+        startIfNecessary()
         dgroup?.leave()
     }
     
-    final func pause(isTesting: Bool) {
-        if isTesting { return }
+    final func pause(steps: Bool) {
+        if !steps { return }
         dgroup?.enter()
         dgroup?.wait()
     }
     
     final func test() -> Bool {
-        start(isTesting: true)
+        start(steps: false)
         return sequence.isSortedAscending
     }
     

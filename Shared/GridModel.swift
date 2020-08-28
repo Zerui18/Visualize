@@ -15,7 +15,7 @@ final class GridModel: ObservableObject {
         let nQuicksort = nRows / 2
         self.sequences =
             (1...nQuicksort).map {_ in .init(withItems: nColumns, sortingWith: QuickSort.self) }
-            + (1...(nRows - nQuicksort)).map { _ in  .init(withItems: nColumns, sortingWith: MergeSort.self) }
+            + (1...(nRows - nQuicksort)).map { _ in  .init(withItems: nColumns, sortingWith: InsertionSort.self) }
     }
     
     @Published var nRows: Int
